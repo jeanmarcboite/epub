@@ -150,6 +150,22 @@ func (epubReader *EpubReader) GetCover() (string, error) {
 	return "", nil
 }
 
+func OpenBuffer(buffer []byte, size int64) (*EpubReaderCloser, error) {
+	zipReader, err := zip.NewReader(bytes.NewReader(buffer), size)
+	if err != nil {
+		return nil, fmt.Errorf("epub: open zip: %w", err)
+	}
+
+	reader := new(EpubReaderCloser)
+	reader.Name = "filename"
+
+	if err = reader.init(zipReader); err != nil {
+		return nil, err
+	}
+
+	return reader, nil
+}
+
 func OpenReader(filename string) (*EpubReaderCloser, error) {
 	zipFile, err := os.Open(filename)
 	if err != nil {
