@@ -153,7 +153,7 @@ func (epubReader *EpubReader) GetCover() (string, error) {
 func OpenReader(filename string) (*EpubReaderCloser, error) {
 	zipFile, err := os.Open(filename)
 	if err != nil {
-		return nil, fmt.Errorf("epub: open %s: %w", filename, err)
+		return nil, err
 	}
 
 	zipStat, err := zipFile.Stat()
@@ -173,7 +173,7 @@ func OpenReader(filename string) (*EpubReaderCloser, error) {
 	reader.file = zipFile
 
 	if err = reader.init(zipReader); err != nil {
-		return nil, fmt.Errorf("epub: init reader %s: %w", filename, err)
+		return nil, err
 	}
 
 	return reader, nil
