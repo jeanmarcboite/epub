@@ -3,6 +3,7 @@ package epub
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/base64"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -147,6 +148,12 @@ func (epubReader *EpubReader) GetISBN() (string, error) {
 }
 
 func (epubReader *EpubReader) GetCover() (string, error) {
+	for _, item := range epubReader.Rootfiles[0].Manifest.Item {
+		if item.ID == "cover" && item.MediaType == "image/jpeg" {
+			buffer, err := epubReader.readFile(item.Href)
+			return "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(buffer.Bytes()), err
+		}
+	}
 	return "", nil
 }
 
